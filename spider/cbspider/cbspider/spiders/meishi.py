@@ -4,7 +4,7 @@ import os
 import sqlite3
 '''
     时间：2018/4/2
-    作者：佘奇晋
+    作者：Output20
     说明：本爬虫用于爬取美食杰网站
 '''
 
