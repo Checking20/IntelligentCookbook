@@ -4,10 +4,9 @@ import os
 import sqlite3
 '''
     时间：2018/4/2
-    作者：佘奇晋
+    作者：Output20
     说明：本爬虫用于爬取美食杰网站
 '''
-
 
 # 爬虫
 class MeishiSpider(scrapy.Spider):
@@ -17,7 +16,7 @@ class MeishiSpider(scrapy.Spider):
     start_urls = [
         # 首页："http://www.meishij.net/chufang/diy/wucan/?&page=1"
         # 生成多页(这里设置为10页)：
-        "http://www.meishij.net/chufang/diy/wucan/?&page=%d"%(i+1) for i in range(1)
+        "http://www.meishij.net/chufang/diy/wucan/?&page=%d"%(i+1) for i in range(10)
     ]
     '''
     ---暂时未用到的数据库部分---
@@ -39,13 +38,15 @@ class MeishiSpider(scrapy.Spider):
             url = href.xpath("@href")[0].extract()
             # print(url)
             # 解析详细页面
-            yield scrapy.Request(url, self.parse_detail_page)
+            yield scrapy.Request(url, callback=self.parse_detail_page)
 
     # 具体页面爬取方法：人工定位各个信息的位置
     def parse_detail_page(self, response):
-        # 抓取结构
+        # 选择抓取结构
         dish = CbspiderItem()
         info2 = response.xpath("//div[@class='info2']")
+        # 获取成品图(链接)
+        dish['chengpin'] = response.xpath("//div[@class='cp_headerimg_w']/img/@src")[0].extract()
         # 获取工艺
         dish['gongyi'] = (info2.xpath("//li[@class='w127']/a").xpath("text()").extract()+[''])[0]
         # 获取口味
@@ -58,13 +59,19 @@ class MeishiSpider(scrapy.Spider):
         dish['zhunbeishijian'] = (info2.xpath("//li[@class='w270 bb0']//a").xpath("text()").extract()+[''])[0]
         # 获取烹饪时间
         dish['pengrenshijian'] = (info2.xpath("//li[@class='w270 bb0 br0']//a").xpath("text()").extract()+[''])[0]
-        dish['zhuliao'] = dict()
-        dish['fuliao'] = dict()
         # 获取主料
+        dish['zhuliao'] = dict()
         for h4 in response.xpath("//div[@class='yl zl clearfix']//h4"):
             dish['zhuliao'][h4.xpath("a/text()").extract()[0]] = h4.xpath("span/text()").extract()[0]
         # 获取辅料
+        dish['fuliao'] = dict()
         for li in response.xpath("//div[@class='yl fuliao clearfix']//li"):
             dish['fuliao'][li.xpath("h4/a/text()").extract()[0]] = li.xpath("span/text()").extract()[0]
-        # print(dish)
+        # 获取过程（文本+链接）
+        # 当前步数
+        count = 0
+        dish['guocheng'] = dict()
+        for div in response.xpath("//div[@class='editnew edit']/div/div"):
+            count += 1
+            dish['guocheng'][count] = (div.xpath("p/text()")[0].extract(),div.xpath("p/img/@src")[0].extract())
         return dish

@@ -10,6 +10,8 @@ import scrapy
 
 # 定义抓取数据
 class CbspiderItem(scrapy.Item):
+    # 成品图
+    chengpin = scrapy.Field()
     # 工艺
     gongyi = scrapy.Field()
     # 口味
@@ -26,3 +28,5 @@ class CbspiderItem(scrapy.Item):
     zhuliao = scrapy.Field()
     # 辅料
     fuliao = scrapy.Field()
+    # 过程
+    guocheng = scrapy.Field()
