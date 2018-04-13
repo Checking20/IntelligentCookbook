@@ -1,5 +1,6 @@
 import scrapy
 from cbspider.items import CbspiderItem
+import re
 import os
 import sqlite3
 '''
@@ -16,7 +17,7 @@ class MeishiSpider(scrapy.Spider):
     start_urls = [
         # 首页："http://www.meishij.net/chufang/diy/wucan/?&page=1"
         # 生成多页(这里设置为10页)：
-        "http://www.meishij.net/chufang/diy/wucan/?&page=%d"%(i+1) for i in range(10)
+        "http://www.meishij.net/chufang/diy/wucan/?&page=%d"%(i+1) for i in range(55)
     ]
     '''
     ---暂时未用到的数据库部分---
@@ -44,9 +45,16 @@ class MeishiSpider(scrapy.Spider):
     def parse_detail_page(self, response):
         # 选择抓取结构
         dish = CbspiderItem()
+        # 获取id
+        pattern = re.compile(r'zuofa\/.*')
+        dish['id'] = pattern.findall(response.url)[0][6:-5]
+        # 获取菜名
+        dish['caiming'] = response.xpath("//h1/a/text()").extract()[0]
         info2 = response.xpath("//div[@class='info2']")
         # 获取成品图(链接)
         dish['chengpin'] = response.xpath("//div[@class='cp_headerimg_w']/img/@src")[0].extract()
+        # 获取标签
+        dish['biaoqian'] = response.xpath("//dl[@class='yj_tags clearfix']//a/text()").extract()
         # 获取工艺
         dish['gongyi'] = (info2.xpath("//li[@class='w127']/a").xpath("text()").extract()+[''])[0]
         # 获取口味
@@ -68,10 +76,13 @@ class MeishiSpider(scrapy.Spider):
         for li in response.xpath("//div[@class='yl fuliao clearfix']//li"):
             dish['fuliao'][li.xpath("h4/a/text()").extract()[0]] = li.xpath("span/text()").extract()[0]
         # 获取过程（文本+链接）
-        # 当前步数
         count = 0
         dish['guocheng'] = dict()
         for div in response.xpath("//div[@class='editnew edit']/div/div"):
             count += 1
             dish['guocheng'][count] = (div.xpath("p/text()")[0].extract(),div.xpath("p/img/@src")[0].extract())
+        # 获取主题
+        dish['zhuti'] = response.xpath("//ul[@class='pathstlye1']//a[@class='curzt']/text()").extract()
+        # 获取技巧
+        dish['jiqiao'] = response.xpath("//div[@class='editnew edit']/p[@style]/text()").extract()
         return dish
