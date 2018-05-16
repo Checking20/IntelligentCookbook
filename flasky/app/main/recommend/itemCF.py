@@ -3,7 +3,6 @@
 
 import math
 from operator import itemgetter
-from .recsys import RecEngine
 from ...models import ItemSim, ICFRec, UserItem
 from ... import db
 
@@ -17,7 +16,7 @@ class ItemBasedCF:
         # K值：找到和已经看过菜谱最相似的20个菜谱
         self.n_sim_cookbook = 20
         # N值: 将其中前10名推荐给用户
-        self.n_rec_cookbook = 10
+        self.n_rec_cookbook = 50
         # 将数据集划分为训练集和测试集
         self.trainSet = {}
         self.testSet = {}
@@ -54,9 +53,9 @@ class ItemBasedCF:
                     self.cookbook_sim_matrix.setdefault(m1, {})
                     self.cookbook_sim_matrix[m1].setdefault(m2, 0)
                     # 朴素计数
-                    # weight = 1
+                    weight = 1
                     # 根据用户活跃度进行加权(item-IUF)
-                    weight = 1/math.log2(1+len(cookbooks))
+                    # weight = 1/math.log2(1+len(cookbooks))
                     self.cookbook_sim_matrix[m1][m2] += weight
         print("Build co-rated users matrix success!")
 
@@ -136,40 +135,6 @@ class ItemBasedCF:
         db.session.commit()
         print("ICF：Save complete")
 
-
-# 计算使用类
-class ICFEngine(RecEngine):
-    # 推荐(统一接口)
-    @staticmethod
-    def recommend(uid):
-        # ICFEngine.recommend_offline()
-        ICFEngine.recommend_online()
-
-    # 推荐(利用离线数据)
-    @staticmethod
-    def recommend_offline(uid):
-        return sorted([(item.cid, item.score) for item in ICFRec.query.filter_by(uid=uid).all()], key=itemgetter(1),
-                      reverse=True)
-
-    # 推荐（利用离线数据+在线数据）
-    @staticmethod
-    def recommend_online(uid):
-        N = 10
-        # 产生行为的所有产品
-        watched_item_dict = {}
-        # 产生行为的所有产品（出于性能可能会缩减）
-        for item in UserItem.query.filter_by(uid=uid).all():
-            watched_item_dict[item.cid] = item.weight
-
-        rank = {}
-        for cid, weight in watched_item_dict.items():
-            for sim_item in ItemSim.query.filter_by(cid1=cid).all():
-                if sim_item.cid2 in watched_item_dict:
-                    continue
-                rank.setdefault(sim_item.cid2, 0)
-                # 排名的依据——>推荐菜谱与该已看菜谱的相似度(累计)*用户对已看菜谱的评分
-                rank[sim_item.cid2] += sim_item.sim * weight
-        return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
 
 
 

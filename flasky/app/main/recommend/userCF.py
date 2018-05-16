@@ -1,20 +1,19 @@
 
 # 协同过滤推荐算法（itemCF）实现
 
-import math,json
+import math
 from operator import itemgetter
-from .recsys import RecEngine
-from ...models import UserItem, UCFRec
+from ...models import UCFRec
 from ... import db
 
 
-class UserBasedCF():
+class UserBasedCF:
     # 初始化相关参数
     def __init__(self):
         # 找到与目标用户兴趣相似的20个用户，为其推荐10部电影
 
         self.n_sim_user = 20
-        self.n_rec_cookbook = 10
+        self.n_rec_cookbook = 50
         # 将数据集划分为训练集和测试集
         self.trainSet = {}
         self.testSet = {}
@@ -97,14 +96,7 @@ class UserBasedCF():
         print("UCF: Save complete")
 
 
-# 计算使用类
-class UCFEngine(RecEngine):
 
-    # 推荐(利用离线数据)
-    @staticmethod
-    def recommend(uid):
-        # 还应有过滤模块
-        return [(item.cid, item.score) for item in UCFRec.query.filter_by(uid=uid).all()]
 
 
 

@@ -43,7 +43,7 @@ class TestingConfig(Config):
 # 产品环境配置
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-                             'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+                             'mysql+pymysql:///' + os.path.join(basedir, 'data.sqlite')
 
 # 环境配置选择
 config = {

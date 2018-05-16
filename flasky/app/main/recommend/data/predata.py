@@ -34,7 +34,7 @@ class Predata(object):
         print('Load %s success!' % filename)
 
     # 将数据划分为训练集和测试集
-    def divide_data(self,filename, pivot=0.50):
+    def divide_data(self, filename, pivot=0.50):
         for line in self.load_file(filename):
             user, cookbook, rating, timestamp = line.split(',')
             if (random.random() < pivot):
