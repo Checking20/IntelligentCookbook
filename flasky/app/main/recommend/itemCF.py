@@ -11,12 +11,12 @@ from ... import db
 class ItemBasedCF:
     # 初始化参数
     def __init__(self):
-        # 找到相似的20个菜谱，为目标用户推荐10个菜谱
+        # 找到相似的20个菜谱，为目标用户推荐50个菜谱
 
-        # K值：找到和已经看过菜谱最相似的20个菜谱
+        # K值：最相似的20个菜谱
         self.n_sim_cookbook = 20
-        # N值: 将其中前10名推荐给用户
-        self.n_rec_cookbook = 50
+        # N值: 推荐(缓存)50个菜谱
+        self.n_rec_cookbook = 20
         # 将数据集划分为训练集和测试集
         self.trainSet = {}
         self.testSet = {}
@@ -109,7 +109,6 @@ class ItemBasedCF:
         # 存储用户-产品推荐表
         rec_list = []
         for user in self.userset:
-            # print("recommend for %s", user)
             for (cid, score) in self.recommend(user):
                 rec_list.append(ICFRec(uid=user, cid=cid, score=score))
         db.session.add_all(rec_list)

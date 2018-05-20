@@ -10,9 +10,11 @@ from ... import db
 class UserBasedCF:
     # 初始化相关参数
     def __init__(self):
-        # 找到与目标用户兴趣相似的20个用户，为其推荐10部电影
+        # 找到与目标用户兴趣相似的20个用户，为其推荐50个菜谱
 
+        # K值：最相似的20个用户
         self.n_sim_user = 20
+        # N值：推荐(缓存)50个菜谱
         self.n_rec_cookbook = 50
         # 将数据集划分为训练集和测试集
         self.trainSet = {}

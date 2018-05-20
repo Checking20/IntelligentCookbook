@@ -9,9 +9,22 @@ from app.main.recommend.functions import softmax, random_choose
 from ...models import UserItem, ItemSim
 import threading
 
+# 推荐个数(未剪裁)
+rec_N = 50
+
+
 # RecEngine：基本的推荐引擎
 class RecEngine:
+    @staticmethod
+    def recommend(uid):
         pass
+
+
+# RandomEngine:随机的推荐引擎
+class RandomEngine(RecEngine):
+    @staticmethod
+    def recommend(uid):
+        rec_dict = {}
 
 
 # UCFEngine：基于userCF的推荐引擎
@@ -19,11 +32,10 @@ class UCFEngine(RecEngine):
     # 推荐(利用离线数据)
     @staticmethod
     def recommend(uid):
-        # 还应有过滤模块
         rec_dict = {}
         for item in UCFRec.query.filter_by(uid=uid).all():
             rec_dict[item.cid] = item.score
-        return sorted(rec_dict.items(), key=itemgetter(1), reverse=True)
+        return sorted(rec_dict.items(), key=itemgetter(1), reverse=True)[:rec_N]
 
 
 # ICFEngine：基于itemCF的推荐引擎
@@ -31,21 +43,20 @@ class ICFEngine(RecEngine):
     # 推荐(统一接口)
     @staticmethod
     def recommend(uid):
-        # ICFEngine.recommend_offline()
         return ICFEngine.recommend_online(uid)
 
-    # 推荐(利用离线数据)
+    '''# 推荐(利用离线数据)
     @staticmethod
     def recommend_offline(uid):
         rec_dict = {}
         for item in ICFRec.query.filter_by(uid=uid).all():
             rec_dict[item.cid] = item.score
         return sorted(rec_dict.items(), key=itemgetter(1), reverse=True)
+    '''
 
     # 推荐（利用离线数据+在线数据）
     @staticmethod
     def recommend_online(uid):
-        N = 50
         # 产生行为的所有产品
         watched_item_dict = {}
         # 产生行为的所有产品
@@ -60,13 +71,14 @@ class ICFEngine(RecEngine):
                 rank.setdefault(sim_item.cid2, 0)
                 # 排名的依据——>推荐菜谱与该已看菜谱的相似度(累计)*用户对已看菜谱的评分
                 rank[sim_item.cid2] += sim_item.sim * weight
-        return sorted(rank.items(), key=itemgetter(1), reverse=True)[:N]
+        return sorted(rank.items(), key=itemgetter(1), reverse=True)[:rec_N]
 
 
 # 引擎和其编号的映射
 EngineMap = {
     'eid1': ICFEngine,
     'eid2': UCFEngine,
+    'eid3': RandomEngine,
 }
 
 
@@ -95,15 +107,6 @@ class RecSys:
                 self.cache.redis.set(('eid' + str(engine)), 0)
 
     def combine(self, user):
-        '''
-        rec_dict = {}
-        for (engine, weight) in self.engines:
-            engine.recommend(user)
-            for (cid, score) in engine.recommend(user):
-                rec_dict.setdefault(cid, 0)
-                rec_dict[cid] += weight * score
-        return rec_dictne
-        '''
         weight_dict = {}
         for engine in self.engines:
             weight_dict[engine] = float(self.cache.redis.get(('eid'+str(engine))))
@@ -117,7 +120,7 @@ class RecSys:
 
     # 推荐系统工作流程
     def recommend(self, user):
-        N = 60
+        N = 50
         rec_list = []
         TTL_rec = 60
         TTL_rej = 60
@@ -135,7 +138,7 @@ class RecSys:
         # 1. 推荐引擎+模型计算初始推荐列表
         ceid, raw_list = self.combine(user)
         # 2. 对初始列表过滤得到过滤后的列表
-        filtered_list = self.filter.filter_item(raw_list)
+        filtered_list = self.filter.filter_item(user, raw_list)
         # 3. 对过滤后的列表进行排序
         rank_list = self.rank.rank(filtered_list)
         # 4. 反馈器记录这次推荐

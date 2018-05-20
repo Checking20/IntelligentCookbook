@@ -7,7 +7,7 @@ class Visit(db.Model):
     uid = db.Column(db.String(64), primary_key=True)
     cid = db.Column(db.String(64), primary_key=True)
     # 最近一次访问时间
-    recent = db.Column(db.DateTime, default=datetime.datetime.now)
+    recent = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
     # 访问次数
     times = db.Column(db.Integer)
 
@@ -18,7 +18,7 @@ class Like(db.Model):
     __tablename__ = 'like'
     uid = db.Column(db.String(64), primary_key=True)
     cid = db.Column(db.String(64), primary_key=True)
-    datetime = db.Column(db.DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+    datetime = db.Column(db.DateTime, default=datetime.datetime.now)
 
     def __repr__(self):
         return '<like %r %r>' % (self.uid, self.cid)
@@ -65,17 +65,6 @@ class ItemSim(db.Model):
 
     def __repr__(self):
         return '<ItemSim %r %r>' % (self.cid1, self.cid2)
-
-
-# 用户相似度表(每日)
-class UserSim(db.Model):
-    __tablename__ = 'usersims'
-    uid1 = db.Column(db.String(64), primary_key=True)
-    uid2 = db.Column(db.String(64), primary_key=True)
-    sim = db.Column(db.Float)
-
-    def __repr__(self):
-        return '<UserSim %r %r>' % (self.uid1, self.uid2)
 
 
 # 用户-产品推荐表(ICF)

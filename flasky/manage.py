@@ -5,7 +5,8 @@ from app.main.recommend.itemCF import ItemBasedCF as ICF
 from app.main.recommend.userCF import UserBasedCF as UCF
 from app.main.recommend.data.predata import Predata
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+# app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+app = create_app('default')
 manager = Manager(app)
 
 
@@ -23,7 +24,7 @@ class Calculate(Command):
         ucf = UCF()
         icf.get_dataset(pd)
         ucf.get_dataset(pd)
-        # 计算
+        # 推荐计算
         icf.calc_cookbook_sim()
         ucf.calc_user_sim()
         # 写入数据库
@@ -31,8 +32,7 @@ class Calculate(Command):
         ucf.save()
 
 manager.add_command('shell', Shell(make_context=make_shell_context))
-manager.add_command('calculate', Calculate())
-manager.add_command('db')
+manager.add_command('calc', Calculate())
 
 if __name__ == '__main__':
     manager.run()
