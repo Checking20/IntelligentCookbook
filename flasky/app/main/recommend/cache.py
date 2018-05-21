@@ -12,4 +12,4 @@ class Cache(object):
 
     # 初始化：链接redis数据库
     def __init__(self):
-        self.redis = Redis(host="118.25.4.52", port=6379, password=123456)
+        self.redis = Redis(host="localhost", port=6379)
