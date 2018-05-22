@@ -10,7 +10,7 @@ from ...models import UserItem, ItemSim
 import threading
 
 # 推荐个数(未剪裁)
-rec_N = 50
+rec_N = 20
 
 
 # RecEngine：基本的推荐引擎
