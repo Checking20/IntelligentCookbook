@@ -10,15 +10,14 @@ from ... import db
 # 基于Item的协同过滤算法
 class ItemBasedCF:
     # 初始化参数
-    def __init__(self, user=10, rec=20):
+    def __init__(self, items=10, rec=20):
 
         # K值：最相似的10个菜谱
-        self.n_sim_cookbook = user
-        # N值: 推荐(缓存)20个菜谱
+        self.n_sim_cookbook = items
+        # N值: 推荐20个菜谱
         self.n_rec_cookbook = rec
         # 将数据集划分为训练集和测试集
         self.trainSet = {}
-        self.testSet = {}
         # 用户(用户名单)
         self.userset = set()
 
@@ -28,9 +27,8 @@ class ItemBasedCF:
         self.cookbook_count = 0
 
     # 读文件得到“用户-菜谱”数据(基于比例划分数据)
-    def get_dataset(self, predata):
-        self.trainSet = predata.trainSet
-        self.testSet = predata.testSet
+    def get_dataset(self, data):
+        self.trainSet = data
 
     # 计算菜谱之间的相似度
     def calc_cookbook_sim(self):

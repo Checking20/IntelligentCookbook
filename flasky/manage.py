@@ -22,8 +22,8 @@ class Calculate(Command):
         pd = Predata()
         icf = ICF()
         ucf = UCF()
-        icf.get_dataset(pd)
-        ucf.get_dataset(pd)
+        icf.get_dataset(pd.trainSet)
+        ucf.get_dataset(pd.trainSet)
         # 推荐计算
         icf.calc_cookbook_sim()
         ucf.calc_user_sim()

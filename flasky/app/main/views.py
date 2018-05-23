@@ -1,7 +1,6 @@
 from flask import render_template, session, redirect, url_for
 
 from . import main
-from .. import db
 from app.main.recommend.recsys import RecSys
 from app.main.dataprocess.useraction import \
     record_dislike, record_like, record_visit, query_like, cancel_like, cancel_dislike
@@ -76,7 +75,7 @@ def like_get(uid):
 @main.route('/calc', methods=['get'])
 # 更新离线数据
 def calc():
-    db.create_all()
+    RecSys.calc()
     return json.dumps(True)
 
 
