@@ -18,7 +18,7 @@ def get_topk(k):
         cid = item.cid
         dt = item.datetime
         score_dict.setdefault(cid, 0)
-        score_dict[cid] += 5*[time.mktime(dt.timetuple())/3600]
+        score_dict[cid] += 5*(time.mktime(dt.timetuple())/3600)
 
     # 浏览加次数分(考虑时间的影响)
     for item in Visit.query.all():
@@ -26,7 +26,7 @@ def get_topk(k):
         times = item.times
         rc = item.recent
         score_dict.setdefault(cid, 0)
-        score_dict[cid] += times*[time.mktime(rc.timetuple())/3600]
+        score_dict[cid] += times*(time.mktime(rc.timetuple())/3600)
 
     top_list = sorted(score_dict.items(), key=itemgetter(1), reverse=True)
 

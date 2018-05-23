@@ -73,7 +73,7 @@ def like_get(uid):
     return json.dumps(query_like(uid))
 
 
-@main.route('/calc', method=['get'])
+@main.route('/calc', methods=['get'])
 # 更新离线数据
 def calc():
     db.create_all()

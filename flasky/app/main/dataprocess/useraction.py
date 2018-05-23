@@ -14,7 +14,7 @@ def record_like(uid, cid):
         db.session.commit()
         # 添加Redis记录
         if cache.redis.exists("Ranking"):
-            cache.redis.zincrby("Ranking", cid, 5*[int(time.time())/3600])
+            cache.redis.zincrby("Ranking", cid, 5*int(time.time()/3600))
         return True
     return False
 
