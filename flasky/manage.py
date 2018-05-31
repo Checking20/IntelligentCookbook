@@ -18,24 +18,21 @@ def make_shell_context():
 class Calculate(Command):
     # 命令内容
     def run(self):
-        pass
         # 读取数据
-        '''
         pd = Predata()
         icf = ICF()
         ucf = UCF()
-        icf.get_dataset(pd)
-        ucf.get_dataset(pd)
+        icf.get_dataset(pd.trainSet)
+        ucf.get_dataset(pd.trainSet)
         # 推荐计算
         icf.calc_cookbook_sim()
         ucf.calc_user_sim()
         # 写入数据库
         icf.save()
         ucf.save()
-        '''
 
 manager.add_command('shell', Shell(make_context=make_shell_context))
-manager.add_command('test', Calculate())
+manager.add_command('calc', Calculate())
 
 if __name__ == '__main__':
     manager.run()

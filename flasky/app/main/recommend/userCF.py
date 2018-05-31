@@ -9,23 +9,21 @@ from ... import db
 
 class UserBasedCF:
     # 初始化相关参数
-    def __init__(self, user=10, rec=20):
+    def __init__(self, users=10, rec=20):
 
         # K值：最相似的10个用户
-        self.n_sim_user = user
+        self.n_sim_user = users
         # N值：推荐(缓存)20个菜谱
         self.n_rec_cookbook = rec
         # 将数据集划分为训练集和测试集
         self.trainSet = {}
-        self.testSet = {}
         # 用户相似度矩阵
         self.user_sim_matrix = {}
         self.cookbook_count = 0
 
     # 读文件得到“用户-电影”数据
-    def get_dataset(self, predata):
-        self.trainSet = predata.trainSet
-        self.testSet = predata.testSet
+    def get_dataset(self, data):
+        self.trainSet = data
 
     # 计算用户之间的相似度
     def calc_user_sim(self):
