@@ -4,7 +4,7 @@ from . import main
 from .. import db
 from app.main.recommend.recsys import RecSys
 from app.main.dataprocess.useraction import \
-    record_dislike, record_like, record_visit, query_like, cancel_like, cancel_dislike
+    record_dislike, record_like, record_visit, query_like, cancel_like, cancel_dislike,query_dislike
 from app.main.dataprocess.topk import get_topk
 import json
 
@@ -71,6 +71,12 @@ def topk_get(k):
 # 得到指定用户喜欢列表
 def like_get(uid):
     return json.dumps(query_like(uid))
+
+
+@main.route('/getdislike/<uid>', methods=['get'])
+# 得到指定用户不喜欢列表
+def dislike_get(uid):
+    return json.dumps(query_dislike(uid))
 
 
 @main.route('/calc', methods=['get'])

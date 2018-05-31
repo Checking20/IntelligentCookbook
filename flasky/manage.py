@@ -18,7 +18,9 @@ def make_shell_context():
 class Calculate(Command):
     # 命令内容
     def run(self):
+        pass
         # 读取数据
+        '''
         pd = Predata()
         icf = ICF()
         ucf = UCF()
@@ -30,9 +32,10 @@ class Calculate(Command):
         # 写入数据库
         icf.save()
         ucf.save()
+        '''
 
 manager.add_command('shell', Shell(make_context=make_shell_context))
-manager.add_command('calc', Calculate())
+manager.add_command('test', Calculate())
 
 if __name__ == '__main__':
     manager.run()

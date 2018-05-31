@@ -58,11 +58,18 @@ def query_like(uid):
     return like_list
 
 
+# 查询不喜欢
+def query_dislike(uid):
+    # 查询关系表
+    dislike_list = [item.cid for item in Dislike.query.filter_by(uid=uid).add()]
+    return dislike_list
+
+
 # 取消喜欢
 def cancel_like(uid, cid):
     # Redis部分
     # 关系表部分
-    like = Like.query.filter_by(uid=uid,cid=cid).first()
+    like = Like.query.filter_by(uid=uid, cid=cid).first()
     if not (like is None):
         db.session.delete(like)
         db.session.commit()
