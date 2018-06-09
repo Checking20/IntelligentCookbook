@@ -94,6 +94,19 @@ class UserBasedCF:
         db.session.commit()
         print("UCF: Save complete")
 
+    # 更新数据
+    def refresh(self, data):
+        db.create_all()
+        # 清空之前数据
+        for item in UCFRec.query.all():
+            db.session.delete(item)
+        db.session.commit()
+        # 计算新的推荐
+        self.get_dataset(data)
+        self.calc_user_sim()
+        self.save()
+
+
 
 
 

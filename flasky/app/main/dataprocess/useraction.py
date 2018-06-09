@@ -1,7 +1,7 @@
 from ...models import Visit, Like, Dislike
 from app.main.recommend.cache import Cache
 from ... import db
-import datetime, time
+import time
 
 
 # 记录喜欢
@@ -57,11 +57,13 @@ def query_like(uid):
     like_list = [item.cid for item in Like.query.filter_by(uid=uid).all()]
     return like_list
 
+
 # 查询不喜欢
 def query_dislike(uid):
     # 查询关系表
-    dislike_list = [item.cid for item in Dislike.query.filter_by(uid=uid).add()]
+    dislike_list = [item.cid for item in Dislike.query.filter_by(uid=uid).all()]
     return dislike_list
+
 
 # 取消喜欢
 def cancel_like(uid, cid):

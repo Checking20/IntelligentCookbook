@@ -4,9 +4,10 @@ from ...models import Item, Dislike
 # 过滤产品(用户选择)
 class Filter:
     def __init__(self):
+        # 过滤阈值
         self.threshold = 0.5
 
-    # 对推荐物品进行过滤(文档质量)
+    # 过滤菜谱
     def filter_item(self, uid, raw_list):
         print("Filtering")
         filtered_dict = {}

@@ -14,11 +14,17 @@ def hello_world():
     return 'Hello world!'
 
 
-@main.route('/recommend/<uid>', methods=['GET', 'POST'])
+@main.route('/recommend/<uid>', methods=['GET'])
 # 为用户推荐（Bandit）
 def recommend(uid):
     rs = RecSys()
     return json.dumps(rs.recommend(uid))
+
+
+@main.route('/feedback/<rid>/<cid>', methods=['GET'])
+# 收集详细的反馈
+def get_feedback_detail(rid,cid):
+    return get_feedback(rid)
 
 
 @main.route('/feedback/<rid>', methods=['GET'])
@@ -56,6 +62,7 @@ def like_cancel(uid, cid):
 
 
 @main.route('/canceldislike/<uid>/<cid>')
+# 取消某菜谱的屏蔽
 def dislike_cancel(uid, cid):
     return json.dumps(cancel_dislike(uid, cid))
 
@@ -78,10 +85,10 @@ def dislike_get(uid):
     return json.dumps(query_dislike(uid))
 
 
-@main.route('/calc', methods=['get'])
+@main.route('/calc', methods=['GET'])
 # 更新离线数据
 def calc():
-    RecSys.calc()
+    RecSys().calc()
     return json.dumps(True)
 
 

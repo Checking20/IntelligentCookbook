@@ -11,16 +11,13 @@ from ... import db
 class ItemBasedCF:
     # 初始化参数
     def __init__(self, items=10, rec=20):
-
         # K值：最相似的10个菜谱
         self.n_sim_cookbook = items
         # N值: 推荐20个菜谱
         self.n_rec_cookbook = rec
-        # 将数据集划分为训练集和测试集
         self.trainSet = {}
         # 用户(用户名单)
         self.userset = set()
-
         # 用户相似度矩阵
         self.cookbook_sim_matrix = {}
         self.cookbook_popular = {}
@@ -59,14 +56,16 @@ class ItemBasedCF:
         # 计算菜谱之间的相似性
         print("Calculating cookbook similarity matrix ...")
         for m1, related_cookbooks in self.cookbook_sim_matrix.items():
-            mx = 0 # wix中最大的值
+            # wix中最大的值
+            mx = 0
             for m2, count in related_cookbooks.items():
                 # 注意0向量的处理，即某菜谱的用户数为0
                 if self.cookbook_popular[m1] == 0 or self.cookbook_popular[m2] == 0:
                     self.cookbook_sim_matrix[m1][m2] = 0
                 else:
                     # 余弦相似度
-                    self.cookbook_sim_matrix[m1][m2] = count / math.sqrt(self.cookbook_popular[m1] * self.cookbook_popular[m2])
+                    self.cookbook_sim_matrix[m1][m2] = \
+                        count / math.sqrt(self.cookbook_popular[m1] * self.cookbook_popular[m2])
                 # 更新最大值
                 mx = max(self.cookbook_sim_matrix[m1][m2], mx)
             # 进行相似度归一化(Item-Norm)
@@ -79,7 +78,6 @@ class ItemBasedCF:
         K = self.n_sim_cookbook
         N = self.n_rec_cookbook
         rank = {}
-
         watched_cookbooks = self.trainSet[user]
         for cookbook, rating in watched_cookbooks.items():
             # 得到与看过菜谱最相似的K个菜谱
@@ -111,7 +109,6 @@ class ItemBasedCF:
         db.session.add_all(rec_list)
         print("ICF: user-item rec OK")
 
-        # 遍历菜谱, 找出K相似
         sim_list = []
         # 存储产品相似度
         for cookbook in self.cookbook_sim_matrix.keys():
@@ -130,6 +127,24 @@ class ItemBasedCF:
 
         db.session.commit()
         print("ICF：Save complete")
+
+    # 更新数据
+    def refresh(self, data):
+        # 清空之前的数据
+        db.create_all()
+        for item in ItemSim.query.all():
+            db.session.delete(item)
+        for item in ICFRec.query.all():
+            db.session.delete(item)
+        for item in UserItem.query.all():
+            db.session.delete(item)
+        db.session.commit()
+        # 计算新的推荐
+        self.get_dataset(data)
+        self.calc_cookbook_sim()
+        self.save()
+
+
 
 
 
