@@ -11,14 +11,19 @@ class Feedback:
         self.discount = 0.9
 
     # 记录推荐
-    def record(self, eid):
+    def record(self, eid, vnum):
         # 设置失效时间(三分钟)
         TTL = 60*5
         if self.cache.redis.get('ridcount') is None:
-            self.cache.redis.set('ridcount', 0)
+            self.cache.redis.set('ridcount', 1)
         # 得到当前推荐的编号
         rid = self.cache.redis.incr("ridcount")
         print('recommendID: ', rid)
+
+        # 如果不是组合引擎，不用反馈：
+        if vnum < 5:
+            return rid
+        # 是组合引擎则需要
         rid_str = "rid" + str(rid)
         # 记录键对应的推荐引擎
         self.cache.redis.set(rid_str, eid)
@@ -31,7 +36,7 @@ class Feedback:
         rid_str = "rid" + str(rid)
         eid = self.cache.redis.get(rid_str)
         if not (eid is None):
-            print("rid %d match!"%rid)
+            print("rid %d match!"% rid)
             eid = int(eid)
             eid_str = "eid" + str(eid)
             # 得到相应引擎的权重

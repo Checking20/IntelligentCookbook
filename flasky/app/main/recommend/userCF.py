@@ -9,12 +9,15 @@ from ... import db
 
 class UserBasedCF:
     # 初始化相关参数
-    def __init__(self, users=10, rec=20):
-
+    def __init__(self, **kwargs):
         # K值：最相似的10个用户
-        self.n_sim_user = users
+        self.n_sim_user = 10
+        if 'k_user' in kwargs:
+            self.n_sim_user = kwargs['k_user']
         # N值：推荐(缓存)20个菜谱
-        self.n_rec_cookbook = rec
+        self.n_rec_cookbook = 20
+        if 'rec' in kwargs:
+            self.n_rec_cookbook = kwargs['rec']
         # 将数据集划分为训练集和测试集
         self.trainSet = {}
         # 用户相似度矩阵

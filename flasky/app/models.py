@@ -86,7 +86,37 @@ class UCFRec(db.Model):
     score = db.Column(db.Float)
 
     def __repr__(self):
-        return '<UCFRec %r %e>' % (self.uid, self.cid)
+        return '<UCFRec %r %r>' % (self.uid, self.cid)
+
+# 用户产品推荐表(LFM)
+class LFMRec(db.Model):
+    __tablename__ = 'lfmr'
+    uid = db.Column(db.String(64), primary_key=True)
+    cid = db.Column(db.String(64), primary_key=True)
+    score = db.Column(db.Float)
+
+
+# P矩阵(user-factor)
+class Pmat(db.Model):
+    __tablename__ = 'pmat'
+    uid = db.Column(db.String(64), primary_key=True)
+    fid = db.Column(db.Integer, primary_key=True)
+    score = db.Column(db.Float)
+
+    def __repr__(self):
+        return '<Pmat %r %r>' % (self.uid, self.fid)
+
+
+# Q矩阵(item-factor)
+class Qmat(db.Model):
+    __tablename__ = 'qmat'
+    cid = db.Column(db.String(64), primary_key=True)
+    fid = db.Column(db.Integer, primary_key=True)
+    score = db.Column(db.Float)
+
+    def __repr__(self):
+        return '<Qmat %r %r>' % (self.cid, self.fid)
+
 
 
 

@@ -3,18 +3,22 @@
 
 import math
 from operator import itemgetter
-from ...models import ItemSim, ICFRec, UserItem
-from ... import db
+from app.models import ItemSim, ICFRec, UserItem
+from app import db
 
 
 # 基于Item的协同过滤算法
 class ItemBasedCF:
     # 初始化参数
-    def __init__(self, items=10, rec=20):
-        # K值：最相似的10个菜谱
-        self.n_sim_cookbook = items
-        # N值: 推荐20个菜谱
-        self.n_rec_cookbook = rec
+    def __init__(self,**kwargs):
+        # K值：默认最相似的10个菜谱
+        self.n_sim_cookbook = 10
+        if 'k_item' in kwargs:
+            self.n_sim_cookbook = kwargs['k_item']
+        # N值: 默认推荐20个菜谱
+        self.n_rec_cookbook = 20
+        if 'rec' in kwargs:
+            self.n_rec_cookbook = kwargs['rec']
         self.trainSet = {}
         # 用户(用户名单)
         self.userset = set()
