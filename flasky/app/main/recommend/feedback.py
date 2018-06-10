@@ -36,7 +36,7 @@ class Feedback:
         rid_str = "rid" + str(rid)
         eid = self.cache.redis.get(rid_str)
         if not (eid is None):
-            print("rid %d match!"% rid)
+            print("rid %s match!"% str(rid))
             eid = int(eid)
             eid_str = "eid" + str(eid)
             # 得到相应引擎的权重
@@ -53,7 +53,7 @@ class Feedback:
         rid_str = "rid" + str(rid)
         eid = self.cache.redis.get(rid_str)
         if not (eid is None):
-            print("rid %d not match!" % rid)
+            print("rid %s not match!" % str(rid))
             eid = int(eid)
             eid_str = "eid" + str(eid)
             # 得到相应引擎的权重

@@ -168,14 +168,14 @@ class LFM:
         db.create_all()
         # 存储P矩阵
         uf_list = []
-        for (user, flist) in self.pmat:
+        for (user, flist) in self.pmat.items():
             for i in range(len(flist)):
                 uf_list.append(Pmat(uid=user, fid=i, score=flist[i]))
         db.session.add_all(uf_list)
         print("LFM: Pmat OK")
         # 存储Q矩阵
         cf_list = []
-        for (item, flist) in self.qmat:
+        for (item, flist) in self.qmat.items():
             for i in range(len(flist)):
                 cf_list.append(Qmat(cid=item, fid=i, score=flist[i]))
         db.session.add_all(cf_list)

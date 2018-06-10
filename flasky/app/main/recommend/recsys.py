@@ -28,7 +28,7 @@ class RecEngine:
 class TopEngine(RecEngine):
     @staticmethod
     def recommend(uid):
-        get_topk(rec_N)
+        return get_topk(rec_N)
 
 
 # UCFEngine：基于userCF的推荐引擎（离线）
@@ -109,7 +109,7 @@ class RecSys:
         self.cache = Cache()
         self.fb = Feedback()
         # 在综合引擎被使用的引擎
-        self.engines = [1]
+        self.engines = [1,2,3]
 
         # 是否有定制化选择
         if 'engines' in kwargs:
@@ -117,11 +117,11 @@ class RecSys:
         # 初始化引擎权重
         for engine in self.engines:
             if self.cache.redis.get(('eid'+str(engine))) is None:
-                self.cache.redis.set(('eid'+str(engine)), 0)
+                self.cache.redis.set(('eid'+str(engine)), 1)
         # 是否初始化权值
         if 'init' in kwargs and kwargs['init'] is True:
             for engine in self.engines:
-                self.cache.redis.set(('eid' + str(engine)), 0)
+                self.cache.redis.set(('eid' + str(engine)), 1)
 
 
     # 推荐方式
@@ -173,7 +173,7 @@ class RecSys:
             rec_list = []
             rid = int(self.cache.redis.lrange(user_str, 0, 0)[0])
             raw_list = self.cache.redis.lrange(user_str, 1, rec_N)
-            for item in raw_list:
+            for item in raw_list[::-1]:
                 rec_list.append(bytes.decode(item))
             return {"rid": rid, "rec_list": rec_list}
 

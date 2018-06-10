@@ -23,7 +23,7 @@ def recommend(uid):
 
 @main.route('/feedback/<rid>/<cid>', methods=['GET'])
 # 收集详细的反馈
-def get_feedback_detail(rid,cid):
+def get_feedback_detail(rid, cid):
     return get_feedback(rid)
 
 
