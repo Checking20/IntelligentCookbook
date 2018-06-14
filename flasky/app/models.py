@@ -1,7 +1,7 @@
 from . import db
 import datetime
 
-
+# 用户访问表
 class Visit(db.Model):
     __tablename__ = 'visit'
     uid = db.Column(db.String(64), primary_key=True)
@@ -14,7 +14,6 @@ class Visit(db.Model):
 
 # 用户喜好表
 class Like(db.Model):
-
     __tablename__ = 'like'
     uid = db.Column(db.String(64), primary_key=True)
     cid = db.Column(db.String(64), primary_key=True)
@@ -56,7 +55,7 @@ class UserItem(db.Model):
         return '<UserItem %r %r>' % (self.uid, self.cid)
 
 
-# 产品相似度表(每日更新但立马反映)
+# 产品相似度表
 class ItemSim(db.Model):
     __tablename__ = 'itemsims'
     cid1 = db.Column(db.String(64), primary_key=True)

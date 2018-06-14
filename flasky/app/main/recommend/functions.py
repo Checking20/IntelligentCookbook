@@ -14,7 +14,7 @@ def softmax(weight_dict):
     return q_dict
 
 
-# 根据概率选择
+# 根据概率选择引擎
 def random_choose(q_dict):
     r = random.random()
     cur = 0

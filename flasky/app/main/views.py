@@ -3,13 +3,14 @@ from flask import render_template, session, redirect, url_for
 from . import main
 from app.main.recommend.recsys import RecSys
 from app.main.dataprocess.useraction import \
-    record_dislike, record_like, record_visit, query_like, cancel_like, cancel_dislike, query_dislike
+    record_dislike, record_like, record_visit,\
+    query_like, cancel_like, cancel_dislike, query_dislike
 from app.main.dataprocess.topk import get_topk
 import json
 
 
 @main.route('/', methods=['GET', 'POST'])
-# 主页
+# 主页(测试服务器是否正常链接)
 def hello_world():
     return 'Hello world!'
 
@@ -68,7 +69,7 @@ def dislike_cancel(uid, cid):
 
 
 @main.route('/topk/<k>', methods=['GET'])
-# 得到topk
+# 得到Top-K
 def topk_get(k):
     return json.dumps(get_topk(int(k)))
 

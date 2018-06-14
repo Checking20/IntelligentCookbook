@@ -30,7 +30,7 @@ class Predata(object):
                 yield line.strip('\r\n')
         print('Load %s success!' % filename)
 
-    # 用于模拟
+    # 将外部数据导入
     def usefile(self, filename):
         like_list = []
         db.create_all()

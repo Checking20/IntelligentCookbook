@@ -2,15 +2,15 @@
 from .cache import Cache
 
 
-# Feedback: 收集用户侧的信息用于RecSys的模型改善（使用Redis缓存）
+# Feedback: 改善RecSys的模型
 class Feedback:
     def __init__(self):
         # Redis缓存
         self.cache = Cache()
-        # 折扣
+        # 权值更新折扣
         self.discount = 0.9
 
-    # 记录推荐
+    # 记录推荐并设置监听
     def record(self, eid, vnum):
         # 设置失效时间(三分钟)
         TTL = 60*5
@@ -20,10 +20,10 @@ class Feedback:
         rid = self.cache.redis.incr("ridcount")
         print('recommendID: ', rid)
 
-        # 如果不是组合引擎，不用反馈：
+        # 如果不是使用组合，不用反馈：
         if vnum < 5:
             return rid
-        # 是组合引擎则需要
+        # 是组合引擎则需要反馈
         rid_str = "rid" + str(rid)
         # 记录键对应的推荐引擎
         self.cache.redis.set(rid_str, eid)
@@ -31,7 +31,7 @@ class Feedback:
         self.cache.redis.expire(rid_str, TTL)
         return rid
 
-    # 推荐有效
+    # 推荐有效，更新权值
     def match(self, rid):
         rid_str = "rid" + str(rid)
         eid = self.cache.redis.get(rid_str)
@@ -48,7 +48,7 @@ class Feedback:
             return True
         return False
 
-    # 推荐无效
+    # 推荐无效，更新权值
     def not_match(self, rid):
         rid_str = "rid" + str(rid)
         eid = self.cache.redis.get(rid_str)

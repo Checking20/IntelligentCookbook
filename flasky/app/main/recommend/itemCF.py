@@ -1,6 +1,4 @@
-
 # 协同过滤推荐算法（itemCF）实现
-
 import math
 from operator import itemgetter
 from app.models import ItemSim, ICFRec, UserItem

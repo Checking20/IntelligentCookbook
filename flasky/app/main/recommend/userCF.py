@@ -1,5 +1,4 @@
-# 协同过滤推荐算法（itemCF）实现
-
+# 协同过滤推荐算法（UserCF）实现
 import math
 from operator import itemgetter
 from ...models import UCFRec
@@ -9,11 +8,11 @@ from ... import db
 class UserBasedCF:
     # 初始化相关参数
     def __init__(self, **kwargs):
-        # K值：最相似的10个用户
+        # K值：默认最相似的10个用户
         self.n_sim_user = 10
         if 'k_user' in kwargs:
             self.n_sim_user = kwargs['k_user']
-        # N值：推荐(缓存)20个菜谱
+        # N值：默认推荐(缓存)20个菜谱
         self.n_rec_cookbook = 20
         if 'rec' in kwargs:
             self.n_rec_cookbook = kwargs['rec']
@@ -23,13 +22,13 @@ class UserBasedCF:
         self.user_sim_matrix = {}
         self.cookbook_count = 0
 
-    # 读文件得到“用户-电影”数据
+    # 读文件得到“用户-菜谱”数据
     def get_dataset(self, data):
         self.trainSet = data
 
     # 计算用户之间的相似度
     def calc_user_sim(self):
-        # 构建“电影-用户”倒排索引
+        # 构建“菜谱-用户”倒排索引
         # key = cookbookID, value = list of userIDs who have seen this cookbook
         print('Building cookbook-user table ...')
         cookbook_user = {}

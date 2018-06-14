@@ -109,7 +109,7 @@ class RecSys:
         self.cache = Cache()
         self.fb = Feedback()
         # 在综合引擎被使用的引擎
-        self.engines = [1,2,3]
+        self.engines = [1, 2, 3]
 
         # 是否有定制化选择
         if 'engines' in kwargs:

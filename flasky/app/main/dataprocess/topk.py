@@ -13,14 +13,14 @@ def get_topk(k):
                 for item in cache.redis.zrevrange("ranking", 0, 10, withscores=True)][:k]
     score_dict = {}
 
-    # 喜欢加五分(考虑时间的影响)
+    # 喜欢加五分(考虑时间的影响，小时为单位)
     for item in Like.query.all():
         cid = item.cid
         dt = item.datetime
         score_dict.setdefault(cid, 0)
         score_dict[cid] += 5*int(time.mktime(dt.timetuple())/3600)
 
-    # 浏览加次数分(考虑时间的影响)
+    # 浏览加次数分(考虑时间的影响，小时为单位)
     for item in Visit.query.all():
         cid = item.cid
         times = item.times
